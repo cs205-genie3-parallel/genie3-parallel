@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Genie 3
 
 You can use the [editor on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
