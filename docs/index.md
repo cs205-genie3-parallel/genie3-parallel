@@ -1,37 +1,31 @@
 ## Genie 3
 
-You can use the [editor on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+### Description of problem and motivation for HPC
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Existing work
 
-```markdown
-Syntax highlighted code block
+### Description of solution
 
-# Header 1
-## Header 2
-### Header 3
+### Description of your model and/or data
+where did it come from, how did you acquire it, what does it mean, etc.
 
-- Bulleted
-- List
+### Technical description of the parallel application
+programming models, platform and infrastructure
 
-1. Numbered
-2. List
+### Links to repository with source code, evaluation data sets and test cases
 
-**Bold** and _Italic_ and `Code` text
+### Technical description of the software design
+code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
 
-[Link](url) and ![Image](src)
-```
+### Performance evaluation 
+(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Description of advanced features 
+like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
 
-### Jekyll Themes
+### Final discussion about goals achieved, 
+improvements suggested, lessons learnt, future work, interesting insights…
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/cs205-genie3-parallel/genie3-parallel/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### Citations
