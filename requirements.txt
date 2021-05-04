@@ -1,0 +1,3 @@
+sklearn==0.20
+sagemaker==2.39.0
+boto3
