@@ -1,6 +1,6 @@
 import argparse
 import os
-from sklearn.tree.tree import BaseDecisionTree
+# from sklearn.tree.tree import BaseDecisionTree
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from numpy import *
 import time
@@ -15,14 +15,14 @@ from sagemaker.session import s3_input, Session
 
 
 def compute_feature_importances(estimator):
-    if isinstance(estimator, BaseDecisionTree):
-        return estimator.tree_.compute_feature_importances(normalize=False)
-    else:
-        importances = [e.tree_.compute_feature_importances(normalize=False)
+#     if isinstance(estimator, BaseDecisionTree):
+#         return estimator.tree_.compute_feature_importances(normalize=False)
+#     else:
+    importances = [e.tree_.compute_feature_importances(normalize=False)
                        for e in estimator.estimators_]
-        importances = asarray(importances)
-        # number of samples meeting these conditions / total number of samples
-        return sum(importances,axis=0) / len(estimator)
+    importances = asarray(importances)
+    # number of samples meeting these conditions / total number of samples
+    return sum(importances,axis=0) / len(estimator)
 
 
 
@@ -63,18 +63,20 @@ def get_link_list(VIM,gene_names=None,regulators='all',maxcount='all',file_name=
     """
 
     # Check input arguments
-    if not isinstance(VIM,ndarray):
-        raise ValueError('VIM must be a square array')
-    elif VIM.shape[0] != VIM.shape[1]:
-        raise ValueError('VIM must be a square array')
+#     if not isinstance(VIM,ndarray):
+#         raise ValueError('VIM must be a square array')
+#     elif VIM.shape[0] != VIM.shape[1]:
+#         raise ValueError('VIM must be a square array')
 
     ngenes = VIM.shape[0]
 
-    if gene_names:
-        if not isinstance(gene_names,(list,tuple)):
-            raise ValueError('input argument gene_names must be a list of gene names')
-        elif len(gene_names) != ngenes:
-            raise ValueError('input argument gene_names must be a list of length p, where p is the number of columns/genes in the expression data')
+#     if gene_names is None:
+#         gene_names = []
+#     else:
+#         if not isinstance(gene_names,(list,tuple,ndarray)):
+#             raise ValueError('input argument gene_names must be a list of gene names')
+#         elif len(gene_names) != ngenes:
+#             raise ValueError('input argument gene_names must be a list of length p, where p is the number of columns/genes in the expression data')
 
     if regulators != 'all':
         if not isinstance(regulators,(list,tuple)):
@@ -112,7 +114,7 @@ def get_link_list(VIM,gene_names=None,regulators='all',maxcount='all',file_name=
     flag = 1
     i = 0
     while flag and i < nInter:
-        print(f'nInter = {i}')
+#         print(f'nInter = {i}')
         (TF_idx,target_idx,score) = vInter_sort[i]
         if score == 0:
             flag = 0
@@ -133,13 +135,13 @@ def get_link_list(VIM,gene_names=None,regulators='all',maxcount='all',file_name=
 
         outfile = open(file_name,'w')
 
-        if gene_names:
-            for i in range(nToWrite):
-                (TF_idx,target_idx,score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                outfile.write('%s\t%s\t%.6f\n' % (gene_names[TF_idx],gene_names[target_idx],score))
-        else:
+        for i in range(nToWrite):
+            (TF_idx,target_idx,score) = vInter_sort[i]
+            TF_idx = int(TF_idx)
+            target_idx = int(target_idx)
+            outfile.write('%s\t%s\t%.6f\n' % (gene_names[TF_idx],gene_names[target_idx],score))
+        
+        if gene_names is None:
             for i in range(nToWrite):
                 (TF_idx,target_idx,score) = vInter_sort[i]
                 TF_idx = int(TF_idx)
@@ -151,20 +153,18 @@ def get_link_list(VIM,gene_names=None,regulators='all',maxcount='all',file_name=
 
     else:
 
-        if gene_names:
-            for i in range(nToWrite):
-                (TF_idx,target_idx,score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                print('%s\t%s\t%.6f' % (gene_names[TF_idx],gene_names[target_idx],score))
-        else:
+        if gene_names is None:
             for i in range(nToWrite):
                 (TF_idx,target_idx,score) = vInter_sort[i]
                 TF_idx = int(TF_idx)
                 target_idx = int(target_idx)
                 print('G%d\tG%d\t%.6f' % (TF_idx+1,target_idx+1,score))
-
-
+        else:
+            for i in range(nToWrite):
+                (TF_idx,target_idx,score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                print('%s\t%s\t%.6f' % (gene_names[TF_idx],gene_names[target_idx],score))
 
 
 def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='all',tree_method='RF',K='sqrt',ntrees=1000): #,nthreads=1
@@ -232,9 +232,11 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
         raise ValueError('expr_data must be an array in which each row corresponds to a condition/sample and each column corresponds to a gene')
 
     ngenes = expr_data.shape[1]
-
-    if gene_names:
-        if not isinstance(gene_names,(list,tuple)):
+    
+    if gene_names is None:
+        gene_names = []
+    else:
+        if not isinstance(gene_names,(list,tuple,ndarray)):
             raise ValueError('input argument gene_names must be a list of gene names')
         elif len(gene_names) != ngenes:
             raise ValueError('input argument gene_names must be a list of length p, where p is the number of columns/genes in the expr_data')
@@ -264,11 +266,6 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
     elif ntrees <= 0:
         raise ValueError('input argument ntrees must be a stricly positive integer')
 
-    if not isinstance(nthreads,int):
-        raise ValueError('input argument nthreads must be a stricly positive integer')
-    elif nthreads <= 0:
-        raise ValueError('input argument nthreads must be a stricly positive integer')
-
 
     print('Tree method: ' + str(tree_method))
     print('K: ' + str(K))
@@ -284,7 +281,8 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
 
 
     # Learn an ensemble of trees for each target gene, and compute scores for candidate regulators
-    VIM = zeros((ngenes,ngenes))
+#     VIM = zeros((ngenes,ngenes))
+    VIM = zeros((stop_idx-start_idx,ngenes))
 
     # if nthreads > 1:
     #     print('running jobs on %d threads' % nthreads)
@@ -307,8 +305,8 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
 
 
     print('running single threaded jobs')
-    for i in range(start_idx, stop_idx):
-        print('Gene %d/%d...' % (i+1,ngenes))
+    for i in range(stop_idx-start_idx):
+        print('Gene %d/%d...' % (i+start_idx,stop_idx))
 
         vi = GENIE3_single(expr_data,i,input_idx,tree_method,K,ntrees)
         VIM[i,:] = vi
@@ -367,14 +365,14 @@ def GENIE3_single(expr_data,output_idx,input_idx,tree_method,K,ntrees):
 
     return vi
 
-def preprocess_df(uri, start_idx, stop_idx):
+def preprocess_data(uri):
     df = pd.read_csv(uri, sep='\t')
-    gene_names = df['Gene Name'][start_idx:stop_idx]
+    gene_names = df['Gene Name'].values 
     df = df.drop(['Gene ID'], axis=1)
     df = df.set_index('Gene Name', drop=True)
     df_T = df.T
     df_T = df_T.fillna(0)
-    data = df_T.to_numpy()
+    data = df_T.values
     return data, gene_names
     
 
@@ -406,12 +404,21 @@ if __name__ =='__main__':
 #     cancer_uri = f"s3://{bucket_name}/675_cancer.tsv"
     output_path = f"s3://{bucket_name}/output/"
 
-    data, gene_names = preprocess_data(args.train, args.start_idx, args.stop_idx)
+    data, gene_names = preprocess_data(args.train)
+#     print(gene_names)
 
     #VIM = GENIE3(healthy_arr[:,:5])
 
     VIM = GENIE3(data, gene_names=gene_names, start_idx=args.start_idx, stop_idx=args.stop_idx)
-    get_link_list(VIM, gene_names=gene_names, file_name=output_path+'healthy_output_ranking.txt')
+    get_link_list(VIM, gene_names=gene_names, file_name='healthy_output_ranking.txt')
+    
+    
+#     from boto.s3.key import Key
+#     key = Key('hello.txt')
+#     key.set_contents_from_file('/tmp/hello.txt')
+
+#     # Boto 3
+#     s3.Object('mybucket', 'hello.txt').put(Body=open('/tmp/hello.txt', 'rb'))
 
 
     # ... load from args.train and args.test, train a model, write model to args.model_dir.
