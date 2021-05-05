@@ -388,13 +388,12 @@ if __name__ =='__main__':
     # parser.add_argument('--learning-rate', type=float, default=0.05)
     parser.add_argument('--start_idx', type=int, default=0)
     parser.add_argument('--stop_idx', type=int, default=10)
-    parser.add_argument('--data', type=)
-    parser.add_argument('--gene_names', type=list, default=[])
+#     parser.add_argument('--gene_names', type=list, default=[])
 
     # Data, model, and output directories
     # parser.add_argument('--output-data-dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR'))
     # parser.add_argument('--model-dir', type=str, default=os.environ.get('SM_MODEL_DIR'))
-    # parser.add_argument('--train', type=str, default=os.environ.get('SM_CHANNEL_TRAIN'))
+    parser.add_argument('--train', type=str)
     # parser.add_argument('--test', type=str, default=os.environ.get('SM_CHANNEL_TEST'))
 
     args, _ = parser.parse_known_args()
@@ -403,11 +402,11 @@ if __name__ =='__main__':
     my_region = boto3.session.Session().region_name
     bucket_name = 'cs205-final'
     s3 = boto3.resource('s3')
-    healthy_uri = f"s3://{bucket_name}/healthy.tsv"
-    cancer_uri = f"s3://{bucket_name}/675_cancer.tsv"
+#     healthy_uri = f"s3://{bucket_name}/healthy.tsv"
+#     cancer_uri = f"s3://{bucket_name}/675_cancer.tsv"
     output_path = f"s3://{bucket_name}/output/"
 
-    data, gene_names = preprocess_data(healthy_uri, args.start_idx, args.stop_idx)
+    data, gene_names = preprocess_data(args.train, args.start_idx, args.stop_idx)
 
     #VIM = GENIE3(healthy_arr[:,:5])
 
