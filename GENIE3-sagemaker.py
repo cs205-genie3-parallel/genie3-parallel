@@ -7,11 +7,7 @@ import time
 from operator import itemgetter
 from multiprocessing import Pool
 import pandas as pd
-
-import sagemaker
 import boto3
-from sagemaker.amazon.amazon_estimator import get_image_uri
-from sagemaker.session import s3_input, Session
 
 
 def compute_feature_importances(estimator):
@@ -366,6 +362,8 @@ def GENIE3_single(expr_data,output_idx,input_idx,tree_method,K,ntrees):
     return vi
 
 def preprocess_data(uri):
+#     print("URI: " + uri)
+#     print(os.listdir(uri))
     df = pd.read_csv(uri, sep='\t')
     gene_names = df['Gene Name'].values 
     df = df.drop(['Gene ID'], axis=1)
@@ -389,22 +387,29 @@ if __name__ =='__main__':
 #     parser.add_argument('--gene_names', type=list, default=[])
 
     # Data, model, and output directories
-    # parser.add_argument('--output-data-dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR'))
+    parser.add_argument('--output-data-dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR'))
     # parser.add_argument('--model-dir', type=str, default=os.environ.get('SM_MODEL_DIR'))
-    parser.add_argument('--train', type=str)
+    parser.add_argument('--train', type=str, default=os.environ.get('SM_CHANNEL_TRAIN'))
     # parser.add_argument('--test', type=str, default=os.environ.get('SM_CHANNEL_TEST'))
 
     args, _ = parser.parse_known_args()
+    
+#     m_boto3 = boto3.client('sagemaker') 
 
 
-    my_region = boto3.session.Session().region_name
-    bucket_name = 'cs205-final'
+    
+#     bucket_name = 'cs205-final'
     s3 = boto3.resource('s3')
 #     healthy_uri = f"s3://{bucket_name}/healthy.tsv"
 #     cancer_uri = f"s3://{bucket_name}/675_cancer.tsv"
-    output_path = f"s3://{bucket_name}/output/"
+#     output_path = f"s3://{bucket_name}/output/"
 
-    data, gene_names = preprocess_data(args.train)
+#     input_files = [ os.path.join(args.train, file) for file in os.listdir(args.train) ]
+#     raw_data = [ pd.read_csv(file, header=None, engine="python") for file in input_files ]
+
+    data, gene_names = preprocess_data(os.path.join(args.train, "healthy.tsv"))
+    print(args.start_idx)
+    print(args.stop_idx)
 #     print(gene_names)
 
     #VIM = GENIE3(healthy_arr[:,:5])
