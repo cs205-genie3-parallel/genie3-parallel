@@ -1,0 +1,3 @@
+> hadoop fs -rm -R -f graph_edges.csv/
+> hadoop fs -rm -R -f vertices.csv/
+> spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
