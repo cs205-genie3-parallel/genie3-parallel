@@ -1,6 +1,5 @@
 import argparse
 import os
-# from sklearn.tree.tree import BaseDecisionTree
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from numpy import *
 import time
@@ -11,9 +10,6 @@ import boto3
 
 
 def compute_feature_importances(estimator):
-#     if isinstance(estimator, BaseDecisionTree):
-#         return estimator.tree_.compute_feature_importances(normalize=False)
-#     else:
     importances = [e.tree_.compute_feature_importances(normalize=False)
                        for e in estimator.estimators_]
     importances = asarray(importances)
@@ -163,7 +159,7 @@ def get_link_list(VIM,gene_names=None,regulators='all',maxcount='all',file_name=
                 print('%s\t%s\t%.6f' % (gene_names[TF_idx],gene_names[target_idx],score))
 
 
-def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='all',tree_method='RF',K='sqrt',ntrees=1000): #,nthreads=1
+def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='all',tree_method='RF',K='sqrt',ntrees=1000,nthreads=1,n_jobs=1):
 
     '''Computation of tree-based scores for all putative regulatory links.
 
@@ -280,32 +276,30 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
 #     VIM = zeros((ngenes,ngenes))
     VIM = zeros((stop_idx-start_idx,ngenes))
 
-    # if nthreads > 1:
-    #     print('running jobs on %d threads' % nthreads)
+    if nthreads > 1:
+        print('running jobs on %d threads' % nthreads)
 
-    #     # list of list of paramaters, len is ngenes
-    #     input_data = list()
-    #     for i in range(ngenes):
-    #         # Parameters of GENIE3 function, i refers to output_idx
-    #         input_data.append( [expr_data,i,input_idx,tree_method,K,ntrees] )
+        # list of list of paramaters, len is ngenes
+        input_data = list()
+        for i in range(stop_idx-start_idx):
+            # Parameters of GENIE3 function, i refers to output_idx
+            input_data.append( [expr_data,i+start_idx,input_idx,tree_method,K,ntrees,n_jobs] )
 
-    #     # PARALLEL process targeting each gene
-    #     pool = Pool(nthreads)
-    #     alloutput = pool.map(wr_GENIE3_single, input_data)
+        # PARALLEL process targeting each gene
+        pool = Pool(nthreads)
+        alloutput = pool.map(wr_GENIE3_single, input_data)
 
-    #     # len(alloutput) is ngenes
-    #     for (i,vi) in alloutput:
-    #         VIM[i,:] = vi
+        # len(alloutput) is ngenes
+        for (i,vi) in alloutput:
+            VIM[i,:] = vi
 
-    # else:
+    else:
+        print('running single threaded jobs')
+        for i in range(stop_idx-start_idx):
+            print('Gene %d/%d...' % (i+start_idx,stop_idx))
 
-
-    print('running single threaded jobs')
-    for i in range(stop_idx-start_idx):
-        print('Gene %d/%d...' % (i+start_idx,stop_idx))
-
-        vi = GENIE3_single(expr_data,i,input_idx,tree_method,K,ntrees)
-        VIM[i,:] = vi
+            vi = GENIE3_single(expr_data,i+start_idx,input_idx,tree_method,K,ntrees,n_jobs)
+            VIM[i,:] = vi
 
 
     VIM = transpose(VIM)
@@ -318,11 +312,11 @@ def GENIE3(expr_data,gene_names=None,start_idx=None,stop_idx=None,regulators='al
 
 # function for single thread
 def wr_GENIE3_single(args):
-    return([args[1], GENIE3_single(args[0], args[1], args[2], args[3], args[4], args[5])])
+    return([args[1], GENIE3_single(args[0], args[1], args[2], args[3], args[4], args[5], args[6])])
 
 
 # In parallel, split up the output_idx
-def GENIE3_single(expr_data,output_idx,input_idx,tree_method,K,ntrees):
+def GENIE3_single(expr_data,output_idx,input_idx,tree_method,K,ntrees,n_jobs):
 
     ngenes = expr_data.shape[1]
 
@@ -345,9 +339,9 @@ def GENIE3_single(expr_data,output_idx,input_idx,tree_method,K,ntrees):
         max_features = K
 
     if tree_method == 'RF':
-        treeEstimator = RandomForestRegressor(n_estimators=ntrees,max_features=max_features)
+        treeEstimator = RandomForestRegressor(n_estimators=ntrees,max_features=max_features,n_jobs=n_jobs)
     elif tree_method == 'ET':
-        treeEstimator = ExtraTreesRegressor(n_estimators=ntrees,max_features=max_features)
+        treeEstimator = ExtraTreesRegressor(n_estimators=ntrees,max_features=max_features,n_jobs=n_jobs)
 
     # Learn ensemble of trees
     treeEstimator.fit(expr_data_input,output)
@@ -372,6 +366,12 @@ def preprocess_data(uri):
     df_T = df_T.fillna(0)
     data = df_T.values
     return data, gene_names
+
+def upload_file_to_s3(s3_path, local_path, folder):
+    bucket = s3_path.split('/')[2] #bucket is always second as paths are S3://bucket/.././
+    file_path = '/'.join(s3_path.split('/')[3:])
+    response = s3.Object(bucket, os.path.join(file_path,folder)).upload_file(local_path)
+    return response
     
 
 if __name__ =='__main__':
@@ -379,30 +379,25 @@ if __name__ =='__main__':
     parser = argparse.ArgumentParser()
 
     # hyperparameters sent by the client are passed as command-line arguments to the script.
-    # parser.add_argument('--epochs', type=int, default=50)
-    # parser.add_argument('--batch-size', type=int, default=64)
-    # parser.add_argument('--learning-rate', type=float, default=0.05)
     parser.add_argument('--start_idx', type=int, default=0)
     parser.add_argument('--stop_idx', type=int, default=10)
-#     parser.add_argument('--gene_names', type=list, default=[])
+    parser.add_argument('--nthreads', type=int, default=1)
+    parser.add_argument('--n_jobs', type=int, default=1)
+    parser.add_argument('--fname', type=str, default='output_ranking.txt')
+    
 
     # Data, model, and output directories
+    # opt/ml/output
     parser.add_argument('--output-data-dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR'))
     # parser.add_argument('--model-dir', type=str, default=os.environ.get('SM_MODEL_DIR'))
     parser.add_argument('--train', type=str, default=os.environ.get('SM_CHANNEL_TRAIN'))
     # parser.add_argument('--test', type=str, default=os.environ.get('SM_CHANNEL_TEST'))
 
     args, _ = parser.parse_known_args()
-    
-#     m_boto3 = boto3.client('sagemaker') 
 
-
-    
-#     bucket_name = 'cs205-final'
+    bucket_name = 'cs205-final'
     s3 = boto3.resource('s3')
-#     healthy_uri = f"s3://{bucket_name}/healthy.tsv"
-#     cancer_uri = f"s3://{bucket_name}/675_cancer.tsv"
-#     output_path = f"s3://{bucket_name}/output/"
+    output_path = f"s3://{bucket_name}/output/"
 
 #     input_files = [ os.path.join(args.train, file) for file in os.listdir(args.train) ]
 #     raw_data = [ pd.read_csv(file, header=None, engine="python") for file in input_files ]
@@ -410,20 +405,11 @@ if __name__ =='__main__':
     data, gene_names = preprocess_data(os.path.join(args.train, "healthy.tsv"))
     print(args.start_idx)
     print(args.stop_idx)
-#     print(gene_names)
 
-    #VIM = GENIE3(healthy_arr[:,:5])
-
-    VIM = GENIE3(data, gene_names=gene_names, start_idx=args.start_idx, stop_idx=args.stop_idx)
-    get_link_list(VIM, gene_names=gene_names, file_name='healthy_output_ranking.txt')
+    VIM = GENIE3(data, gene_names=gene_names, start_idx=args.start_idx, stop_idx=args.stop_idx,nthreads=args.nthreads,n_jobs=args.n_jobs)
+    output_fname = os.path.join('/opt/ml/output/data', args.fname)
+    get_link_list(VIM, gene_names=gene_names, file_name=output_fname)
     
+    response = upload_file_to_s3(output_path, output_fname, args.fname)
+    print(response)
     
-#     from boto.s3.key import Key
-#     key = Key('hello.txt')
-#     key.set_contents_from_file('/tmp/hello.txt')
-
-#     # Boto 3
-#     s3.Object('mybucket', 'hello.txt').put(Body=open('/tmp/hello.txt', 'rb'))
-
-
-    # ... load from args.train and args.test, train a model, write model to args.model_dir.
