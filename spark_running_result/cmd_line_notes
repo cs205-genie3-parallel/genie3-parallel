@@ -1,3 +1,35 @@
+> scp -i .ssh/cs205-gpu-keypair.pem ranking_idx.txt ubuntu@3.89.163.176:/home/ubuntu/
+> scp -i .ssh/cs205-gpu-keypair.pem spark_output_to_edge_vertices.py ubuntu@3.89.163.176:/home/ubuntu/
+
+
+> sudo apt-add-repository ppa:webupd8team/java
+> sudo apt-get update
+> sudo apt install openjdk-8-jdk
+> java -version
+
+> sudo apt-get install scala
+> scala -version
+
+> sudo apt-get install python
+> python -h
+
+> sudo curl -O http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz
+> sudo tar xvf ./spark-2.2.0-bin-hadoop2.7.tgz
+> sudo mkdir /usr/local/spark
+> sudo cp -r spark-2.2.0-bin-hadoop2.7/* /usr/local/spark
+
+export PATH="$PATH:/usr/local/spark/bin"
+
+
+> rm -R -f vertices.csv
+> rm -R -f graph_edges.csv
+> spark-submit spark_output_to_edge_vertices.py 
+
+
+
+
+--- spark Hadoop cluster ----
+
 > hadoop fs -rm -R -f graph_edges.csv/
 > hadoop fs -rm -R -f vertices.csv/
 > spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 

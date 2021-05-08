@@ -2,6 +2,16 @@
 # pyspark --packages graphframes:graphframes:0.6.0-spark2.3-s_2.11
 
 import graphframes as GF
+from pyspark.sql import SQLContext
+from pyspark import SparkConf, SparkContext
+import pyspark.sql.functions as sf
+from pyspark.sql import SparkSession
+
+conf = SparkConf().setMaster('local[2]').setAppName('graph')
+sc = SparkContext(conf = conf)
+spark = SparkSession(sc)
+sql_context = SQLContext(sc)
+
 
 vertice_df = spark.read.csv(
     "vertices.csv", 
@@ -18,12 +28,6 @@ g = GF.GraphFrame(vertice_df, edge_df)
 
 g.vertices.write.parquet("vertices")
 g.edges.write.parquet("edges")
-
-# Load the vertices and edges.
-# v = sqlContext.read.parquet("hdfs://myLocation/vertices")
-# e = sqlContext.read.parquet("hdfs://myLocation/edges")
-# Create a graph
-# g = GF.GraphFrame(v, e)
 
 
 # Exploring the Graph
