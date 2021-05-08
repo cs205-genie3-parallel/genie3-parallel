@@ -1,10 +1,13 @@
----
+## About Us
 
+---
 layout: default
-title: About Us
+title: About
 nav_order: 2
-
+description: "About Us"
+permalink: /about
 ---
+
 
 # About Us
 {: .no_toc }
