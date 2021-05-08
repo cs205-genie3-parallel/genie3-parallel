@@ -1,5 +1,3 @@
-## Genie 3
-
 ---
 layout: default
 title: Home
@@ -7,6 +5,14 @@ nav_order: 1
 description: "GitHub Home Pages"
 permalink: /
 ---
+
+# GENIE-3 
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 
 # Table of Contents
