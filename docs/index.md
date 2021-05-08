@@ -1,5 +1,13 @@
 ## Genie 3
 
+---
+layout: default
+title: Home
+nav_order: 1
+description: "GitHub Home Pages"
+permalink: /
+---
+
 
 # Table of Contents
 1. [Description of Problem and Motivation for HPC](#introduction)
