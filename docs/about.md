@@ -1,4 +1,3 @@
-## About Us
 ---
 layout: default
 title: About
@@ -7,8 +6,9 @@ description: "About Us"
 permalink: /about
 ---
 
+## About Us
 
-Contact Us:
+If you have any questions, feel free to contact Us:
 
 * Jiahui Tang (jiahuitang@g.harvard.edu)
 * Wenhan Zhang
