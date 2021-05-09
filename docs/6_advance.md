@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Advanced Features
-nav_order: 5
+nav_order: 6
 ---
 ## Table of contents
 {: .no_toc .text-delta }
