@@ -1,22 +1,36 @@
-# genie3-parallel
+---
+layout: default
+title: Technical Details
+nav_order: 3
+---
 
-For more details please proceed to the website:
-[Link to Website](https://cs205-genie3-parallel.github.io/genie3-parallel/)
+## Table of contents
+{: .no_toc .text-delta }
 
-The following guide is a sub section of overall documentation that gives a short introduction into technical details, dataset, and how to use our code.
-
-
+1. TOC
+{:toc}
 
 ## Links to Repository with Source Code, Evaluation Data Sets and Test Cases
-[View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel)
+[View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel){: .btn .btn-purple .fs-5 .mb-4 .mb-md-0 }
 
-[SageMaker Output Dataset Sample](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs)
+**Input Datasets (Model Building, Evaluation and Test etc.):**
 
-[PySpark Performance Evaluation Dataset - 17 millions gene records](https://genie3-proj.s3.amazonaws.com/ranking_idx.txt)
+[Human Gene Raw Dataset]() @问寒这里写一下raw data
 
-[PySpark Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000)
+[PySpark Performance Evaluation Dataset - 17 millions gene records](https://genie3-proj.s3.amazonaws.com/ranking_idx.txt){: .btn .fs-5 .mb-4 .mb-md-0 }
 
-[PySpark Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/graph_edges.csv/part-00000)
+
+**Output Datasets: (Intermediate Result, Full Output etc.)**
+
+[SageMaker Output Full Dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Performance Evaluation Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Performance Evaluation Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Full Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Full Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/full_graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 
 ## Technical Description of the Software Design
@@ -82,7 +96,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import date_format
 from pyspark.sql import SparkSession
 
-conf = SparkConf().setMaster('local[2]').setAppName('genie3')
+conf = SparkConf().setMaster('local[*]').setAppName('genie3')
 sc = SparkContext(conf = conf)
 spark = SparkSession(sc)
 
@@ -94,11 +108,11 @@ def toCSVLine(data):
 
 
 # consider gene link > 0.02 as significant and print them out as edge file
-text_file.filter(lambda line: float(line.split("\t")[2])> 0.02) \
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 	.repartition(1).map(toCSVLine).saveAsTextFile("graph_edges.csv")
 
 # print all distinct value in the first two columns as vertices file
-text_file.filter(lambda line: float(line.split("\t")[2])> 0.02) \
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 	.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1).map(toCSVLine).saveAsTextFile("vertices.csv")
   
 ```
@@ -148,6 +162,15 @@ After submitting to S3, we could take a look in S3 bucket, our results are both 
 
 ![image](https://user-images.githubusercontent.com/6150979/117563222-f7188000-b0d6-11eb-977a-6a35fb41263e.png)
 
+### PySpark Graph
+
+In our project, the final output produced by Spark could be further read into PySpark as the input of Graph and build a network. The genes names in `vertices.csv` could be used to build gene vertices, and the gene connection with significant pairwise correlation in `graph_edges.csv` could be used as gene edges and weights to build gene relationships.
+
+More technical details could be found on [Advanced Feature - Part II Graph](https://cs205-genie3-parallel.github.io/genie3-parallel/7_advance_graph.html) page.
+
+Graph Details with Vertices and Edges.
+![image](https://user-images.githubusercontent.com/6150979/117568939-ba0fb600-b0f5-11eb-9b2e-80bc2240524f.png)
+
 
 
 ## Code Baseline 
@@ -175,21 +198,25 @@ O(all genes) = # gene * O(RF per gene)
 Thus, we intended to use SageMaker and parallelize for the scikit learn estimator and Random Forest model building as we described above, to improve computational performance.
 
 
+
 ## Dependencies
 * sklearn==0.24.2
 * sagemaker==2.39.0
 * boto3
+* graphframes 0.6.0
 
 
 ## How to Use the Code
 
 ### SageMaker
 **System and Environment:**
+
 - SageMaker Notebook Instance: ml.t2.medium (default)
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
 **Steps for Running the Code:**
-- Start an AWS SageMaker notebook instance following [this guide](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo](https://github.com/cs205-genie3-parallel/genie3-parallel.git).
+- Start an AWS SageMaker notebook instance following [this guide](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo](https://github.com/cs205-genie3-parallel/genie3-parallel.git)
+
 - Install requirements with 
 ```bash
 pip install -r requirements.txt
@@ -207,6 +234,7 @@ pip install -r requirements.txt
 - Java 1.8.0
 - Scala 2.11.12
 - PySpark 2.4.4
+- graphframes 0.6.0
 
 **Steps for Running the Code:**
 
@@ -278,6 +306,81 @@ $ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertice
 ```
 Resize the number of workers in hardware option from 2 worker node to 4 nodes, and 8 nodes. Then repeat all the steps above to note down execution times for both job. 
 
+#### *Scale Up to Full Dataset from SageMaker Output* 
+
+Next, as we found out g3.4xlarg instance on a SINGLE node with 16 cores perform the best with 6.16 times speedup. (More details in Performance section)
+
+We will then scale up our project to run on [full dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs) (`~3.5G`) with the maximum speedup settings. 
+
+We set the `local[16]` and change the input file name to full dataset filename to use all threads in this GPU instance and rerun the following. 
+
+```bash
+$ hadoop fs -rm -R -f graph_edges.csv/
+$ hadoop fs -rm -R -f vertices.csv/
+$ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
+```
+
+![image](https://user-images.githubusercontent.com/6150979/117566191-cbea5c80-b0e7-11eb-983b-4cc707c708f3.png)
+
+
+Snippets of Final Output of Significant Human Gene Pairs with more than `0.005` Pairwise Correlations:
+
+(Which could be used as input for graph network edge and weight in Spark Graph)
+
+![image](https://user-images.githubusercontent.com/6150979/117566548-c9890200-b0e9-11eb-8eea-cbee2f75acd3.png)
+
+Snippets of Final Output of Significant Human Distinct Value List:
+
+(Which could be used as input for graph network vertices in Spark Graph)
+
+![image](https://user-images.githubusercontent.com/6150979/117566556-ddccff00-b0e9-11eb-823b-fb6fa673c8ef.png)
+
+
+### Graph
+
+In the EC2 instance mentioned above in PySpark, start PySpark with Graphframe by
+
+```bash
+$ pyspark --packages graphframes:graphframes:0.6.0-spark2.3-s_2.11 --repositories https://repos.spark-packages.org
+```
+
+And then we could import output from the Spark Grep tool into PySpark as dataframe, then build graph.
+
+```python
+import graphframes as GF
+from pyspark.sql import SQLContext
+sql_context = SQLContext(sc)
+
+vertice_df = sql_context.read.csv(
+    "vertices.csv/part-00000", 
+    header=False
+).toDF("id")
+
+
+edge_df = sql_context.read.csv(
+    "graph_edges.csv/part-00000", 
+    header=False,
+    sep = ','
+).toDF("src", "dst", "relationship")
+
+g = GF.GraphFrame(vertice_df, edge_df) 
+```
+
+Afterwards, more interesting details of graph could be explored.
+```python
+g.vertices.show()
+g.edges.show()
+
+vertexInDegrees = g.inDegrees
+vertexInDegrees.show()
+vertexOutDegrees = g.outDegrees
+
+## explore network by group by or filtering 
+g.edges.filter("relationship > 0.008").count()
+g.edges.filter("relationship > 0.008").show()
+```
+
+
 
 ## System and Environment needed to Reproduce our Tests
 
@@ -285,7 +388,7 @@ Resize the number of workers in hardware option from 2 worker node to 4 nodes, a
 - SageMaker Notebook Instance: ml.t2.medium (default)
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
-**System and Environment for Spark:**
+**System and Environment for Spark/Graph:**
 - OS: Ubuntu 18.04
 - Instance for Local Node: tried **m4.xlarge** and **g3.4xlarge**
 - Instance for EMR Cluster: **m4.xlarge** with 2 worker nodes, then resize to 4 and 8 worker nodes
@@ -293,3 +396,4 @@ Resize the number of workers in hardware option from 2 worker node to 4 nodes, a
 - Java 1.8.0
 - Scala 2.11.12
 - PySpark 2.4.4
+- graphframes 0.6.0
