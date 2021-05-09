@@ -85,7 +85,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import date_format
 from pyspark.sql import SparkSession
 
-conf = SparkConf().setMaster('local[2]').setAppName('genie3')
+conf = SparkConf().setMaster('local[*]').setAppName('genie3')
 sc = SparkContext(conf = conf)
 spark = SparkSession(sc)
 
@@ -97,11 +97,11 @@ def toCSVLine(data):
 
 
 # consider gene link > 0.02 as significant and print them out as edge file
-text_file.filter(lambda line: float(line.split("\t")[2])> 0.02) \
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 	.repartition(1).map(toCSVLine).saveAsTextFile("graph_edges.csv")
 
 # print all distinct value in the first two columns as vertices file
-text_file.filter(lambda line: float(line.split("\t")[2])> 0.02) \
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 	.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1).map(toCSVLine).saveAsTextFile("vertices.csv")
   
 ```
@@ -282,6 +282,35 @@ $ hadoop fs -rm -R -f vertices.csv/
 $ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
 ```
 Resize the number of workers in hardware option from 2 worker node to 4 nodes, and 8 nodes. Then repeat all the steps above to note down execution times for both job. 
+
+#### *Scale Up to Full Dataset from SageMaker Output* 
+
+Next, as we found out g3.4xlarg instance on a SINGLE node with 16 cores perform the best with 6.16 times speedup. (More details in Performance section)
+
+We will then scale up our project to run on [full dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs) (`~3.5G`) with the maximum speedup settings. 
+
+We set the `local[16]` and change the input file name to full dataset filename to use all threads in this GPU instance and rerun the following. 
+
+```bash
+$ hadoop fs -rm -R -f graph_edges.csv/
+$ hadoop fs -rm -R -f vertices.csv/
+$ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
+```
+
+![image](https://user-images.githubusercontent.com/6150979/117566191-cbea5c80-b0e7-11eb-983b-4cc707c708f3.png)
+
+
+Snippets of Final Output of Significant Human Gene Pairs with more than `0.005` Pairwise Correlations:
+
+(Which could be used as input for graph network edge and weight in Spark Graph)
+
+![image](https://user-images.githubusercontent.com/6150979/117566548-c9890200-b0e9-11eb-8eea-cbee2f75acd3.png)
+
+Snippets of Final Output of Significant Human Distinct Value List:
+
+(Which could be used as input for graph network vertices in Spark Graph)
+
+![image](https://user-images.githubusercontent.com/6150979/117566556-ddccff00-b0e9-11eb-823b-fb6fa673c8ef.png)
 
 
 ## System and Environment needed to Reproduce our Tests
