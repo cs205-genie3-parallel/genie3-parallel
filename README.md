@@ -189,7 +189,7 @@ Thus, we intended to use SageMaker and parallelize for the scikit learn estimato
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
 **Steps for Running the Code:**
-- Start an AWS SageMaker notebook instance following [this guide] (https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo](https://github.com/cs205-genie3-parallel/genie3-parallel.git).
+- Start an AWS SageMaker notebook instance following [this guide](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo](https://github.com/cs205-genie3-parallel/genie3-parallel.git).
 - Install requirements with 
 ```bash
 pip install -r requirements.txt
