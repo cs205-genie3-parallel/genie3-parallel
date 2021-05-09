@@ -48,18 +48,43 @@ At a higher number of genes, is Python multiprocessing better or SKLearn multipl
 - With 32 processes, Python multiprocessing has so much overhead that it cancelled out the gains of parallelism and has similar runtime to the extrapolated linear runtime.
 - SKLearn running with all jobs is slightly faster than with 32 jobs, though not significantly.
 
-### Experiment 3: Effects of vertical scaling
+### Experiment 3: Cost-effectiveness of vertical scaling
 How much speed-up can we get from using instances with more CPUs? What about GPU instances? Are the more expensive EC2 instances worth it?
 
-| Type of instance| No. of CPUs | No. of SKLearn jobs | No. of genes computed | Total processing time including start-up (s) | Speed-up (for total processing time) | Price per hour and mark-up |
+| Type of instance| No. of CPUs | No. of SKLearn jobs | No. of genes computed | Total processing time including start-up (s) | Speed-up | Price per hour and mark-up |
 |:-------------|:------------------|:------|
 | ml.m4.xlarge    | 4           | 32                  | 100                   | 591|1|$0.24 (1)|
 | ml.m5.2xlarge   | 8           | 32                  | 100                   | 374|1.58|$0.461 (1.92)|
 | ml.m5.4xlarge   | 16          | 32                  | 100                   | 347|1.70|$0.922 (3.84)|
 | ml.m5.10xlarge  | 40          | 32                  | 100                   | 342|1.73|$2.40 (10)|
 
+_Note: Speed-up for this experiment is calculated based on total processing time which is the total billable time._
+
 **Takeaways:**
 - GPU instances were actually not available to us because we were using a SKLearn estimator wrapper to run our custom script.
 - The speed-up (with the instance with 4 CPUs as the baseline) is significant when the number of CPUs increases to 8, however from 8 to 16 and 16 to 40 CPUs, the speed-up is minimal.
 - Economically, it is not worth it to use the larger instances as the speed-up does not match the mark-up in the cost.
+
+### Experiment 4: Effect of memory on throughput and successful completion of job
+
+| Type of instance| No. of CPUs | Memory              | No. of SKLearn jobs | No. of genes computed | Elapsed time (s) | Speed-up (compared across same throughput)|
+|:-------------|:------------------|:------|
+| ml.m5.2xlarge   | 8           | 32 GB `memory error`| All                 | 6000                  |15947.86  |1|
+| ml.m5.2xlarge   | 8           | 32 GB `memory error`| All                 | 3000                  |8178.34   |1|
+| ml.m5.4xlarge   | 16          | 64 GB `memory error`| All                 | 6000                  |13236.91  |1.20|
+| ml.m5.4xlarge   | 16          | 64 GB               | All                 | 3000                  |6470.35   |1.26|
+| ml.c5.2xlarge   | 8           | 16 GB `memory error`| All                 | 6000                  |14034.08  |1.14|
+| ml.c5.2xlarge   | 8           | 16 GB `memory error`| All                 | 3000                  |6891.09   |1.29|
+| ml.c5.4xlarge   | 16          | 32 GB `memory error`| All                 | 6000                  |10550.77  |1.51|
+| ml.c5.4xlarge   | 16          | 32 GB `memory error`| All                 | 3000                  |5401.38   |1.51|
+| ml.c5.9xlarge   | 32          | 72 GB `memory error`| All                 | 6000                  |9715.57   |1.64|
+| ml.c5.9xlarge   | 32          | 72 GB               | All                 | 3000                  |5081.83   |1.61|
+| ml.c5.18xlarge  | 72          | 144 GB              | All                 | 6000                  |10317.16  |1.55|
+
+_Note: Speed-up is compared across same throughout, i.e. 6000 genes or 3000 genes._
+
+**Takeaways:**
+- When running separate instances to get the final output, we unexpectedly ran into memory error. This meant that even though the jobs finished computing all of the genes, the memory was not large enough to write the pairwise correlations one by one to the output file.
+- If running on 6000 genes, only the instance with 144 GB of memory could output without error; If running on 3000 genes, only the instances with 64 GB or 72 GB of memory could output without error. This brings in a new dimension to consider when choosing instances.
+- The highest speed-up was 1.64 even though we tried using as 9 times as many CPUs at one point. This points to limited gains in speed-up with increasing CPU number, probably as a result of communications overhead.
 
