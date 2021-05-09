@@ -19,11 +19,13 @@ permalink: /
 
 ## Description of Problem and Motivation for HPC
 
-### Problem Statement:
+### Problem Statement
+
 Our project aims to explore topics related to human genes. Human genome provides us with insights into the genetic basis of disease and biological information of human beings. We plan to use Random Forest machine learning models to perform large-scale analysis on human genetic expression data to infer the connectivity between genes, and specifically, build a gene expression regulatory network. The network would come with genes as its vertices, and pairwise gene correlation as its weighted edges. We will only selectively take significant gene expression pairs into building our network. With that gene regulatory network, it enables us to compare differences in the human gene expression patterns and gene regulatory networks across normal and tumor tissues. 
 
 
-### Motivation for HPC and Big Data:
+### Motivation for HPC and Big Data
+
 Intuitively, the human gene comes with tons of data. With millions of available genomes, there exists an unprecedented big data challenge. Not to mention that, normally, in order to get meaningful results for analysis, the more the number of samples, the better the results. Hence, all those data will form a huge matrix and require big data processing.
 Specifically for our project, we will have 49,196 human genes across 193 human subject samples. The computational challenging part of this project is to build an individual random forest for each gene as a foundation to calculate all pairwise gene expressions. A random forest is a kind of ensemble model that aggregates results from a number of base decision trees, indicating a huge computation time complexity. 
 Therefore, we plan to analyze human gene expression data with a parallelized re-implementation of [GENIE3](https://github.com/vahuynh/GENIE3) in AWS SageMaker. By coding in SageMaker, it could parallelize the random forest estimator part into distributed-memory instances. 
@@ -33,9 +35,9 @@ To get a baseline performance, we ran the GENIE3 analysis sequentially on only 4
 ## Existing Work
 
 As for the existing work, which is the Genie3 code we referred to, it currently includes the option to parallelize using Python multiprocessing. (When trying this option on a local machine, the program was actually stalled. But it later worked on AWS instances.) Understanding the inefficiency of Python multiprocessing, we seek to parallelize GENIE3 on multiple levels in our project, as follows:
-* Distributed memory parallelism -- splitting the computation across several AWS EC2 instances through the orchestration of SageMaker
-* Increased computing power -- using AWS instances with greater number of CPUs and GPUs (we later realized this was not available for the estimator model we are using)
-* Shared memory parallelism -- using either Python multiprocessing or adjusting the `n_jobs` parameter built-in in the SKLearn random forest estimator.
+* Distributed memory parallelism: Splitting the computation across several AWS EC2 instances through the orchestration of SageMaker
+* Increased computing power: Using AWS instances with greater number of CPUs and GPUs (we later realized this was not available for the estimator model we are using)
+* Shared memory parallelism: Using either Python multiprocessing or adjusting the `n_jobs` parameter built-in in the SKLearn random forest estimator.
 Doing this allows us to implement parallelism on several levels, giving the user a great degree of choice depending on their cloud computing resources or budget. We also conducted in-depth experiments to investigate the optimal set-up for future users.
 
 
