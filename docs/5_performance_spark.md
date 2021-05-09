@@ -23,7 +23,7 @@ We run spark jobs both locally on a single node and in an EMR Hadoop cluster. Ex
 
 As the final output from SageMaker is around 6G, it takes hour to run a single spark job, thus to evaluate performance across single and cluster with different number of executors and thread, we take `17535156` gene expressions to be runned on Spark. After we determined the best settings, we could then run the full dataset on that infrastructure. 
 
-Note	| Instances | 	Number of Executor |	Number of Cores (threads per executor)	| Execution time-Job 0	| Execution time - Job 1	| Total execution time	| Speedup |
+Note	| Instances | 	Number of Executor |	Number of Cores (threads per executor)	| Execution time-Job 0	(Sec) | Execution time - Job 1 (Sec)	| Total execution time	(Sec)| Speedup |
 |:-------------|:------------------|:------|:-------------|:------------------|:------|:-------------|:------------------|
 SINGLE|m4.xlarge|1|1|40.627743|40.034216|80.661959|1|
 SINGLE|m4.xlarge|1|2|24.781344|23.992821|48.774165|1.653784519|
@@ -84,3 +84,16 @@ Thus, from the table above we could infer the following as examples:
 * (5). Similarly for `8` instances, I/O is bounded between `1` to `2` threads, thus it achieves maximum speedup of `1.39` when there’s only 1 thread per executor. 
 
 To conclude, we could see that Spark job running on cluster may not neccessarily perform better than running on single node due to communication overhead, data I/O and bounds in I/O. Besides, especially when there's GPU instance, we should perferably use GPU instance for our task for faster processing and higher level of parallelism with high computational needs. Sometimes using GPU on shared memory single node could perform better than using CPU instances in distributed memory cluster. This could also due to the limitation of our vCPU number, than disallow us to spin up a cluster of GPUs.
+
+### Best Performance, Scaling to Upsize Full Dataset (3.5G) from SageMaker Output
+
+Next, as we found out g3.4xlarg instance on a SINGLE node with 16 cores perform the best with 6.16 times speedup.
+
+We will then scale up our project to run on [full dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs) (`~3.5G`) with the maximum speedup settings. 
+
+We set the `local[16]` to use all threads in this GPU instance. 
+
+**Performance on 3.5G full dataset:**
+Note	| Instances | 	Number of Executor |	Number of Cores (threads per executor)	| Execution time-Job 0	(Sec) | Execution time - Job 1 (Sec)	| Total execution time	(Sec)| Speedup |
+|:-------------|:------------------|:------|:-------------|:------------------|:------|:-------------|:------------------|
+SINGLE|g3.4xlarge|1|16|50.482629|49.962730|100.445359 | N/A|
