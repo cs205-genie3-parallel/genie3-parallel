@@ -13,7 +13,7 @@ nav_order: 6
 
 ## Description of advanced features 
 
-### Models/platforms not Explained in Class, Advanced Functions of Modules,
+### Models/platforms not Explained in Class, Advanced Functions of Modules
 In our project, we incorporate SageMaker to parallelize our model. Amazon SageMaker is an easy-to-use machine learning service. It enables us to use Jupyter authoring notebook instances to access our datasets. There are many machine learning algorithms that could be utilized to optimize to run efficiently against extremely large data in a distributed environment. There are many specific features(“perks”) for choosing SageMaker as our main service. We will illustrate the details below.
 
 ### Support for Our Own Algorithms and Frameworks
