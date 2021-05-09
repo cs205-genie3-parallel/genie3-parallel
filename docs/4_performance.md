@@ -44,7 +44,22 @@ At a higher number of genes, is Python multiprocessing better or SKLearn multipl
 | ml.m4.xlarge    | 4           | 32                    | 1                   | 100                   | 977.04|1.04|
 
 **Takeaways:**
-- Running with 32 jobs using SKLearn is much more efficient than running with 32 Python processes
+- Running with 32 jobs using SKLearn is much more efficient than running with 32 Python processes. Going forward, we have decided to use SKLearn multiple-jobs instead of Python multiprocessing.
 - With 32 processes, Python multiprocessing has so much overhead that it cancelled out the gains of parallelism and has similar runtime to the extrapolated linear runtime.
 - SKLearn running with all jobs is slightly faster than with 32 jobs, though not significantly.
+
+### Experiment 3: Effects of vertical scaling
+How much speed-up can we get from using instances with more CPUs? What about GPU instances? Are the more expensive EC2 instances worth it?
+
+| Type of instance| No. of CPUs | No. of SKLearn jobs | No. of genes computed | Total processing time including start-up (s) | Speed-up (for total processing time) | Price per hour and mark-up |
+|:-------------|:------------------|:------|
+| ml.m4.xlarge    | 4           | 32                  | 100                   | 591|1|$0.24 (1)|
+| ml.m5.2xlarge   | 8           | 32                  | 100                   | 374|1.58|$0.461 (1.92)|
+| ml.m5.4xlarge   | 16          | 32                  | 100                   | 347|1.70|$0.922 (3.84)|
+| ml.m5.10xlarge  | 40          | 32                  | 100                   | 342|1.73|$2.40 (10)|
+
+**Takeaways:**
+- GPU instances were actually not available to us because we were using a SKLearn estimator wrapper to run our custom script.
+- The speed-up (with the instance with 4 CPUs as the baseline) is significant when the number of CPUs increases to 8, however from 8 to 16 and 16 to 40 CPUs, the speed-up is minimal.
+- Economically, it is not worth it to use the larger instances as the speed-up does not match the mark-up in the cost.
 
