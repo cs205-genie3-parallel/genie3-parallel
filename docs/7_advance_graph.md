@@ -17,8 +17,7 @@ nav_order: 7
 ### Graph Analysis
 
 In our project, the final output produced by Spark could be further read into PySpark as the input of Graph and build a network.
-The genes names in `vertices.csv` could be used to build gene vertices, and the gene connection with significant pairwise correlation could be used as gene edges
-and weights to build gene relationships.
+The genes names in `vertices.csv` could be used to build gene vertices, and the gene connection with significant pairwise correlation in `graph_edges.csv` could be used as gene edges and weights to build gene relationships.
 
 
 First, we could launch Pyspark with:
@@ -83,6 +82,7 @@ We could explore graph's In Degree and Out Degree Centrality, to get an insight 
 ![image](https://user-images.githubusercontent.com/6150979/117568605-cbf05980-b0f3-11eb-981e-b410a40ca077.png)
 
 We could also explore graph's relationship between vertices by filtering and other more advanced graphframe functions, as a further application to our project.
+
 By using Spark Graphframe, it provides possibility to easily look into particular genes with relatively low computation complexity, and enable users to compare with tumor genes, cancerous genes with other human gene network as well. 
 ![image](https://user-images.githubusercontent.com/6150979/117568622-e0cced00-b0f3-11eb-9974-54a31471c98a.png)
 
