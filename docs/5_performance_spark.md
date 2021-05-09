@@ -22,7 +22,26 @@ Job 0 - Search for all lines in output from Random Forest Model Prediction with 
 Job 1 - Use flatmap and deduplication to get an unique list of genes from column 1 and 2 in output file, save it as Vertices of Graph.
 
 As the final output from SageMaker is around 6G, it takes hour to run a single spark job, thus to evaluate performance across single and cluster with different number of executors and thread, we take 17535156 gene expressions to be runned on Spark. After we determined the best settings, we could then run the full dataset on that infrastructure. 
- 
+
+Note	| Instances | 	Number of Executor |	Number of Cores (threads per executor)	| execution time-Job 0	| execution time - Job 1	| total execution time	| Speedup |	Gene Lines|
+|:-------------|:------------------|:------|:-------------|:------------------|:------|:-------------|:------------------|:------|
+SINGLE|m4.xlarge|1|1|1|40.627743|40.034216|80.661959|17535156
+SINGLE|m4.xlarge|1|1|2|24.781344|23.992821|48.774165|1.653784519|17535156
+SINGLE|m4.xlarge|1|1|4|23.923233|22.676687|46.59992|1.730946298|17535156
+SINGLE|g3.4xlarge|1|1|1|39.642083|39.39333|79.035413|1.020579965|17535156
+SINGLE|g3.4xlarge|1|1|2|22.173776|21.679987|43.853763|1.839339511|17535156
+SINGLE|g3.4xlarge|1|1|4|11.677121|11.155805|22.832926|3.532703562|17535156
+SINGLE|g3.4xlarge|1|1|8|8.807559|8.199493|17.007052|4.74285367|17535156
+SINGLE|g3.4xlarge|1|1|16|6.788141|6.307631|13.095772|6.159389382|17535156
+CLUSTER|m4.xlarge|2|2|1|46.135822|39.726582|85.862404|0.939432805|17535156
+CLUSTER|m4.xlarge|2|2|2|32.580215|26.086063|58.666278|1.374928865|17535156
+CLUSTER|m4.xlarge|2|2|4|43.381694|27.571182|70.952876|1.13683847|17535156
+CLUSTER|m4.xlarge|4|4|1|31.877616|24.982805|56.860421|1.418595881|17535156
+CLUSTER|m4.xlarge|4|4|2|33.207751|26.703331|59.911082|1.346361246|17535156
+CLUSTER|m4.xlarge|4|4|4|44.147461|27.483234|71.630695|1.126080921|17535156
+CLUSTER|m4.xlarge|8|8|1|31.007483|26.814587|57.82207|1.395002963|17535156
+CLUSTER|m4.xlarge|8|8|2|32.511647|28.663032|61.174679|1.318551406|17535156
+CLUSTER|m4.xlarge|8|8|4|41.137129|28.146272|69.283401|1.164232094|17535156
  
 ### Spark Single Node Performance Evaluation
  
