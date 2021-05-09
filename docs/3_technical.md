@@ -36,6 +36,7 @@ customer_estimator = SKLearn(entry_point = 'GENIE3-sagemaker.py',
 healthy_uri = f"s3://{bucket_name}/healthy.tsv"
 custom_estimator.fit({'train':healthy_uri})
 ```
+
 In the entry point script, it contains functions from GENIE3 with changes intended to only limit the analysis for genes between the start index and the stop index, instead of running the analysis for all the genes. We also added in a n_jobs argument to parallelize each SKLearn random forest computation.
 The main function contains a parser for the arguments passed from the custom estimator, the main GENIE3 function calls, as well as utility functions to read, process data from AWS S3 and to upload output to S3.
 
@@ -152,7 +153,29 @@ After submitting to S3, we could take a look in S3 bucket, our results are both 
 
 
 
-## Code Baseline 还是没有！！o(╥﹏╥)o
+## Code Baseline 
+Code baseline is based on [GENIE3 package](https://github.com/vahuynh/GENIE3/blob/master/GENIE3_python/GENIE3.py).
+
+The code used `multiprocessing` python package to map all gene data into different threads by the following lines.
+It independently calls function `wr_GENIE3_single()` to build random forest model individually by setting `nthreads`. 
+
+```python
+pool = Pool(nthreads)
+alloutput = pool.map(wr_GENIE3_single, input_data)
+```
+
+However, the baseline has a high time and space complexity and it requires several days to run the dataset.
+
+The baseline complexity for random forest is calculated as following when we set `n=30k`:
+```
+O(One tree) = # gene * sqrt(# gene) * log(sqrt(# gene))
+O(RF per gene) = # tree * O(One tree)
+O(all genes) = # gene * O(RF per gene)
+	     = n^2 * sqrt(n) * log(sqrt(n))
+	     = 30k * 1000 * 30k * sqrt(30k) * log(30k)
+```
+
+Thus, we intended to use SageMaker and parallelize for the scikit learn estimator and Random Forest model building as we described above, to improve computational performance.
 
 
 ## Dependencies
@@ -190,7 +213,7 @@ pip install -r requirements.txt
 
 **Steps for Running the Code:**
 
-#### Spark on Single Node
+#### *Spark on Single Node*
 
 Spin up instance by following guide on [Lab 9](https://harvard-iacs.github.io/2021-CS205/labs/I9/I9.pdf)
 
@@ -244,7 +267,7 @@ $ spark-submit spark_output_to_edge_vertices.py
 ```
 
 
-#### Spark on EMR Hadoop Cluster
+#### *Spark on EMR Hadoop Cluster*
 Spin up instance by following guide from [Lab 10](https://harvard-iacs.github.io/2021-CS205/labs/I10/I10.pdf)
 
 Everytime when we set different number of executor and thread per executor, and resubmit spark job to evaluate the execution time and speedup performance, 
