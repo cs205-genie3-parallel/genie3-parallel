@@ -21,10 +21,11 @@ In our project, we incorporate SageMaker to parallelize our model. Amazon SageMa
   * SageMaker Studio is an integrated development environment (IDE) that we used to build, train, debug, deploy, and monitor our machine learning models. It helps us to take our models from experimentation to production while boosting productivity easily. The best thing we like about the Studio is that we could operate in a single unified visual interface. We are able to conveniently link our Github repository and write and execute code in Jupyter notebooks. In addition, for the test/experiment stage, we could deploy the models and monitor the performance of each model. At last, Studio also makes it easier to track and debug the machine learning experiments.
 * model building pipelines
   * This is also a feature we have tried out in our process. We tried SageMaker Model Building Pipelines to help build machine learning pipelines that take advantage of direct SageMaker integration. Because of this integration, we can create a pipeline and set up SageMaker Projects without worrying about the step creation and management. The easy steps include:(code of our pipeline attached)
-    * setup the environment
-    * download the dataset
-    * define pipeline parameters
-    * define training step
+    * setup the environment<img width="776" alt="Screen Shot 2021-05-08 at 11 42 41" src="https://user-images.githubusercontent.com/35304349/117558249-a870d480-b049-11eb-8db8-ad0739058f41.png">
+    * download the dataset<img width="778" alt="Screen Shot 2021-05-08 at 11 42 47" src="https://user-images.githubusercontent.com/35304349/117558252-adce1f00-b049-11eb-8272-7da68d08b911.png">
+    * define pipeline parameters<img width="776" alt="Screen Shot 2021-05-08 at 11 42 52" src="https://user-images.githubusercontent.com/35304349/117558263-b7578700-b049-11eb-90e1-bb80503d9535.png">
+    * define training step<img width="776" alt="Screen Shot 2021-05-08 at 11 43 00" src="https://user-images.githubusercontent.com/35304349/117558264-ba527780-b049-11eb-9bcc-1fd2deec2da6.png">
+
 * Function Estimator
   * We have our code attached in the previous section. Some more technical details. Estimators is a high level interface for SageMaker training. It could handle end-to-end Amazon SageMaker training and deployment tasks. We could define a way to determine what image to use for training, what hyperparameters to use, and how to create an appropriate predictor instance.
 * Data wrangler
