@@ -13,13 +13,23 @@ nav_order: 3
 ## Links to Repository with Source Code, Evaluation Data Sets and Test Cases
 [View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel){: .btn .btn-purple .fs-5 .mb-4 .mb-md-0 }
 
-[SageMaker Output Dataset Sample](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
+**Input Datasets (Model Building, Evaluation and Test):**
+[Human Gene Raw Dataset]() @问寒这里写一下raw data
 
 [PySpark Performance Evaluation Dataset - 17 millions gene records](https://genie3-proj.s3.amazonaws.com/ranking_idx.txt){: .btn .fs-5 .mb-4 .mb-md-0 }
 
-[PySpark Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
 
-[PySpark Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+**Output Datasets: **
+
+[SageMaker Output Full Dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Performance Evaluation Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Performance Evaluation Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Full Output Dataset - Vertices](https://genie3-proj.s3.amazonaws.com/vertices.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+[PySpark Full Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/full_graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 
 ## Technical Description of the Software Design
