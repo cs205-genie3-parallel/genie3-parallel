@@ -19,7 +19,7 @@ nav_order: 3
 [PySpark Performance Evaluation Dataset - 17 millions gene records](https://genie3-proj.s3.amazonaws.com/ranking_idx.txt){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 
-**Output Datasets: **
+**Output Datasets:**
 
 [SageMaker Output Full Dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
 
