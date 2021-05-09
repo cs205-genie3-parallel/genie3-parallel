@@ -10,8 +10,6 @@ nav_order: 4
 1. TOC
 {:toc}
 
-(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
-
 ## Performance Evaluation for GENIE3 on AWS SageMaker
 
 We ran detailed experiments to investigate the effect of speed-up at different combinations of parallelism set-up and to find out the optimal set-up. As mentioned, the levels of parallelism includes number of instances, instance type (entails number of CPUs, GPUs and amount of memory), number of jobs for SKLearn random forest estimator, and number of processes for Python multiprocessing.
