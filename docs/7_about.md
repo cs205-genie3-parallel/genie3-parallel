@@ -11,6 +11,6 @@ permalink: /about
 If you have any questions, feel free to contact Us:
 
 * Jiahui Tang (jiahuitang@g.harvard.edu)
-* Wenhan Zhang
-* Mandy Zi
+* Wenhan Zhang (han_zhang@g.harvard.edu)
+* Mandy Zi (xiaomanzi@g.harvard.edu)
 
