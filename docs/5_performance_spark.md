@@ -94,6 +94,7 @@ We will then scale up our project to run on [full dataset](https://cs205-final.s
 We set the `local[16]` to use all threads in this GPU instance. 
 
 **Performance on 3.5G full dataset:**
+
 | Note	| Instances | 	Number of Executor |	Number of Cores (threads per executor)	| Execution time-Job 0	(Sec) | Execution time - Job 1 (Sec)	| Total execution time	(Sec)| Speedup |
 |:-------------|:------------------|:------|:-------------|:------------------|:------|:-------------|:------------------|
 |SINGLE|g3.4xlarge|1|16|50.482629|50.066045|100.548674 | N/A|
