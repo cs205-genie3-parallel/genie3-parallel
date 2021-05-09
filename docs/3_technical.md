@@ -151,6 +151,15 @@ After submitting to S3, we could take a look in S3 bucket, our results are both 
 
 ![image](https://user-images.githubusercontent.com/6150979/117563222-f7188000-b0d6-11eb-977a-6a35fb41263e.png)
 
+### PySpark Graph
+
+In our project, the final output produced by Spark could be further read into PySpark as the input of Graph and build a network. The genes names in `vertices.csv` could be used to build gene vertices, and the gene connection with significant pairwise correlation in `graph_edges.csv` could be used as gene edges and weights to build gene relationships.
+
+More technical details could be found on [Advanced Feature - Part II Graph](https://cs205-genie3-parallel.github.io/genie3-parallel/7_advance_graph.html) page.
+
+Graph Details with Vertices and Edges.
+![image](https://user-images.githubusercontent.com/6150979/117568939-ba0fb600-b0f5-11eb-9b2e-80bc2240524f.png)
+
 
 
 ## Code Baseline 
@@ -178,10 +187,12 @@ O(all genes) = # gene * O(RF per gene)
 Thus, we intended to use SageMaker and parallelize for the scikit learn estimator and Random Forest model building as we described above, to improve computational performance.
 
 
+
 ## Dependencies
 * sklearn==0.24.2
 * sagemaker==2.39.0
 * boto3
+* graphframes 0.6.0
 
 
 ## How to Use the Code
@@ -212,6 +223,7 @@ pip install -r requirements.txt
 - Java 1.8.0
 - Scala 2.11.12
 - PySpark 2.4.4
+- graphframes 0.6.0
 
 **Steps for Running the Code:**
 
@@ -313,13 +325,59 @@ Snippets of Final Output of Significant Human Distinct Value List:
 ![image](https://user-images.githubusercontent.com/6150979/117566556-ddccff00-b0e9-11eb-823b-fb6fa673c8ef.png)
 
 
+### Graph
+
+In the EC2 instance mentioned above in PySpark, start PySpark with Graphframe by
+
+```bash
+$ pyspark --packages graphframes:graphframes:0.6.0-spark2.3-s_2.11 --repositories https://repos.spark-packages.org
+```
+
+And then we could import output from the Spark Grep tool into PySpark as dataframe, then build graph.
+
+```python
+import graphframes as GF
+from pyspark.sql import SQLContext
+sql_context = SQLContext(sc)
+
+vertice_df = sql_context.read.csv(
+    "vertices.csv/part-00000", 
+    header=False
+).toDF("id")
+
+
+edge_df = sql_context.read.csv(
+    "graph_edges.csv/part-00000", 
+    header=False,
+    sep = ','
+).toDF("src", "dst", "relationship")
+
+g = GF.GraphFrame(vertice_df, edge_df) 
+```
+
+Afterwards, more interesting details of graph could be explored.
+```python
+g.vertices.show()
+g.edges.show()
+
+vertexInDegrees = g.inDegrees
+vertexInDegrees.show()
+vertexOutDegrees = g.outDegrees
+
+## explore network by group by or filtering 
+g.edges.filter("relationship > 0.008").count()
+g.edges.filter("relationship > 0.008").show()
+```
+
+
+
 ## System and Environment needed to Reproduce our Tests
 
 **System and Environment for SageMaker:**
 - SageMaker Notebook Instance: ml.t2.medium (default)
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
-**System and Environment for Spark:**
+**System and Environment for Spark/Graph:**
 - OS: Ubuntu 18.04
 - Instance for Local Node: tried **m4.xlarge** and **g3.4xlarge**
 - Instance for EMR Cluster: **m4.xlarge** with 2 worker nodes, then resize to 4 and 8 worker nodes
@@ -327,3 +385,4 @@ Snippets of Final Output of Significant Human Distinct Value List:
 - Java 1.8.0
 - Scala 2.11.12
 - PySpark 2.4.4
+- graphframes 0.6.0
