@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Advanced Features - Graph
+title: Advanced Features Part II - Graph
 nav_order: 7
 ---
 ## Table of contents
