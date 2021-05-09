@@ -12,8 +12,8 @@ nav_order: 2
 
 
 ## Description of Model and Data
-As aforementioned, GENIE3 is a Python package designed to compute the relative pairwise significance between genes using random forests. Both the paper and the package can be accessed openly online. 
-We obtained healthy human gene expression data from the Expression Atlas, specifically from the HipSci Project. The expression data contains `193` human subject samples of RNA sequencing of `49,196` genes. 
+As aforementioned, [GENIE3](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0012776) is a [Python package](https://github.com/vahuynh/GENIE3) designed to compute the relative pairwise significance between genes using random forests. Both the paper and the package can be accessed openly online. 
+We obtained healthy human gene expression data from the [Expression Atlas](https://www.ebi.ac.uk/gxa/experiments), specifically from the [HipSci Project](https://www.ebi.ac.uk/gxa/experiments/E-ENAD-35/Results). The expression data contains `193` human subject samples of RNA sequencing of `49,196` genes. 
 In terms of computational complexity, given `N = 49,196`, this would mean there would be `N` random forest computations, `1000*N` decision trees, and the resulting pairwise significance matrix will contain `N^2` entries, which is more than `2.4` billion. This definitely calls for the parallel program that we have designed.
 
 
