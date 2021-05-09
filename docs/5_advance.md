@@ -23,3 +23,18 @@ In our project, we incorporate SageMaker to parallelize our model. Amazon SageMa
   * This is also a feature we have tried out in our process. We tried SageMaker Model Building Pipelines to help build machine learning pipelines that take advantage of direct SageMaker integration. Because of this integration, we can create a pipeline and set up SageMaker Projects without worrying about the step creation and management. The easy steps include:(code of our pipeline attached)
     * setup the environment
     * download the dataset
+    * define pipeline parameters
+    * define training step
+* Function Estimator
+  * We have our code attached in the previous section. Some more technical details. Estimators is a high level interface for SageMaker training. It could handle end-to-end Amazon SageMaker training and deployment tasks. We could define a way to determine what image to use for training, what hyperparameters to use, and how to create an appropriate predictor instance.
+* Data wrangler
+  * This feature includes lots of functions , including import, prepare, transform, featurize, and analyze data. However, we mainly utilize the Import and Data Flow parts. For our project, we use this to connect to and import data from Amazon Simple Storage Service (Amazon S3) directly. This enables a smooth pipeline of combining our data source, SageMaker scripts, Jupyter Notebook, and Spark scripts.
+* Studio Notebook
+  * Our motivation to use Studio Notebook is that we have been using Jupyter Notebook in other platforms and classes, and we are familiar with the features of Jupyter Notebook. It has following benefits:
+    * Amazon SageMaker Studio notebooks are collaborative notebooks that we can launch quickly because we don't need to set up compute instances and file storage beforehand. A set of instance types, known as Fast launch types are designed to launch in under two minutes. This increases the productivity of the experiments we described in other sections of our report. 
+    * In addition, Studio notebooks provide persistent storage, which enables us to view and share notebooks even if the instances that the notebooks run on are shut down.
+* Preprocessing
+  * This is a feature we suggest future researchers could use to combine with our notebooks and scripts. We originally plan to use this feature to manage our data processing workloads, such as feature engineering, data validation, model evaluation, and model interpretation. However, due to limited time and Amazon resources, we could not utilize this. But our pipeline could be modified to fit this feature easily.
+
+
+
