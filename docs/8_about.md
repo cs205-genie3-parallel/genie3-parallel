@@ -1,7 +1,7 @@
 ---
 layout: default
 title: About
-nav_order: 8
+nav_order: 9
 description: "About Us"
 permalink: /about
 ---
