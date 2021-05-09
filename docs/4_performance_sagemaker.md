@@ -61,7 +61,7 @@ _Note: Speed-up for this experiment is calculated based on total processing time
 **Takeaways:**
 - GPU instances were actually not available to us because we were using a SKLearn estimator wrapper to run our custom script.
 - The speed-up (with the instance with 4 CPUs as the baseline) is significant when the number of CPUs increases to 8, however from 8 to 16 and 16 to 40 CPUs, the speed-up is minimal.
-- Economically, it is not worth it to use the larger instances as the speed-up does not match the mark-up in the cost.
+- Economically, it is not worth it to use the larger instances as the speed-up does not match the mark-up in the cost. Horizontal scaling with smaller instances might be more cost-effective.
 
 ### Experiment 4: Effect of memory on throughput and successful completion of job
 
