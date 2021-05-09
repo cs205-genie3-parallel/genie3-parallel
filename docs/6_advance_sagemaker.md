@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Advanced Features - SageMaker
+title: Advanced Features Part I - SageMaker
 nav_order: 6
 ---
 ## Table of contents
