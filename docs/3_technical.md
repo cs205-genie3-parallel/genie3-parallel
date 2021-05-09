@@ -13,13 +13,14 @@ nav_order: 3
 ## Links to Repository with Source Code, Evaluation Data Sets and Test Cases
 [View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel){: .btn .btn-purple .fs-5 .mb-4 .mb-md-0 }
 
-**Input Datasets (Model Building, Evaluation and Test):**
+**Input Datasets (Model Building, Evaluation and Test etc.):**
+
 [Human Gene Raw Dataset]() @问寒这里写一下raw data
 
 [PySpark Performance Evaluation Dataset - 17 millions gene records](https://genie3-proj.s3.amazonaws.com/ranking_idx.txt){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 
-**Output Datasets:**
+**Output Datasets: (Intermediate Result, Full Output etc.)**
 
 [SageMaker Output Full Dataset](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
 
