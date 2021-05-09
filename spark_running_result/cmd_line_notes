@@ -33,3 +33,10 @@ export PATH="$PATH:/usr/local/spark/bin"
 > hadoop fs -rm -R -f graph_edges.csv/
 > hadoop fs -rm -R -f vertices.csv/
 > spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
+
+
+--- graph ----
+
+pyspark --packages graphframes:graphframes:0.6.0-spark2.3-s_2.11 --repositories https://repos.spark-packages.org
+
+rm metastore_db/dbex.lck 
