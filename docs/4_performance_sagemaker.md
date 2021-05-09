@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Performance I - AWS SageMaker
+title: Performance Part I - AWS SageMaker
 nav_order: 4
 ---
 
