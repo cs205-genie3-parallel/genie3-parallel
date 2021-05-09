@@ -12,8 +12,8 @@ nav_order: 5
 ---
 
 ## Description of advanced features 
-like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
 
+#### models/platforms not explained in class, advanced functions of modules,
 In our project, we incorporate SageMaker to parallelize our model. Amazon SageMaker is an easy-to-use machine learning service. It enables us to use Jupyter authoring notebook instances to access our datasets. There are many machine learning algorithms that could be utilized to optimize to run efficiently against extremely large data in a distributed environment. There are many specific features(“perks”) for choosing SageMaker as our main service. We will illustrate the details below.
 * it includes native support for our own algorithms and frameworks
   * SageMaker offers flexible distributed training options that adjust to users' specific workflows. This means that we could deploy a model into a secure and scalable environment by launching it with only a few clicks from SageMaker Studio or the SageMaker console. Moreover, training and hosting are billed by minutes of usage, with no minimum fees and no upfront commitments. For our case, SageMaker is easy to adapt to our customized Random Forest algorithm specifically designed to process gene expression data. This is a great advantage since we need to parallelize other researchers’ existing code. This is a platform perfect for our project’s use.
@@ -36,5 +36,9 @@ In our project, we incorporate SageMaker to parallelize our model. Amazon SageMa
 * Preprocessing
   * This is a feature we suggest future researchers could use to combine with our notebooks and scripts. We originally plan to use this feature to manage our data processing workloads, such as feature engineering, data validation, model evaluation, and model interpretation. However, due to limited time and Amazon resources, we could not utilize this. But our pipeline could be modified to fit this feature easily.
 
-
+#### techniques to mitigate overheads
+* The configuration of the number of CPU used. Through the experiment, we parallelize the process using 4 to 72 cores. However, the optimal number of cores is 8 cores. The reason might be it minimizes the data transfer and communication cost comparing to larger number of cores.
+#### challenging parallelization or implementation aspects
+* Data size too big: with limited instance and memory resources we have, we need to choose carefully the most economical-friendly instance with as large memory as possible.
+* Though AWS estimator allows multiple instances for each job, it requires us to convert our data to a different data type which is harder to process and modify in our original cod. Hence, considering the trade off, we didn’t use it. 
 
