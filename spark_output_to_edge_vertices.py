@@ -2,7 +2,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import date_format
 from pyspark.sql import SparkSession
 
-conf = SparkConf().setMaster('local[1]').setAppName('meterite')
+conf = SparkConf().setMaster('local[2]').setAppName('genie3')
 sc = SparkContext(conf = conf)
 spark = SparkSession(sc)
 
@@ -14,8 +14,9 @@ def toCSVLine(data):
 
 
 # consider gene link > 0.02 as significant and print them out as edge file
-text_file.filter(lambda line: float(line.split("\t")[2])> 0.02) \
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 	.repartition(1).map(toCSVLine).saveAsTextFile("graph_edges.csv")
 
 # print all distinct value in the first two columns as vertices file
-text_file.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1).map(toCSVLine).saveAsTextFile("vertices.csv")
+text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
+	.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1).map(toCSVLine).saveAsTextFile("vertices.csv")
