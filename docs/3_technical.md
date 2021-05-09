@@ -160,17 +160,90 @@ After submitting to S3, we could take a look in S3 bucket, our results are both 
 * sagemaker==2.39.0
 * boto3
 
-## How to Use the Code 能不能问寒和佳慧把你们的使用指南/terminal call加在这里！！
+
+## How to Use the Code
+
 ### SageMaker
 **System and Environment:**
-- SageMaker notebook instance: ml.t2.medium (default)
+- SageMaker Notebook Instance: ml.t2.medium (default)
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
 **Steps for Running the Code:**
-- Start an AWS SageMaker notebook instance following [this guide] (https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo] (https://github.com/cs205-genie3-parallel/genie3-parallel.git).
-- Install requirements with `pip install -r requirements.txt`
+- Start an AWS SageMaker notebook instance following [this guide] (https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo](https://github.com/cs205-genie3-parallel/genie3-parallel.git).
+- Install requirements with 
+```bash
+pip install -r requirements.txt
+```
 - Navigate to sagemaker/GENIE3-sagemaker.ipynb. Select conda_python3 as the kernel.
 - Run all the cells, edit the `instance_type`, `hyperparameters` as needed and indicate `start_idx` and `stop_idx` to choose the target genes to compute on.
 
+### PySpark
+
+#### Spark on Single Node
+
+Spin up instance by following guide on [Lab 9](https://harvard-iacs.github.io/2021-CS205/labs/I9/I9.pdf)
+
+Open another command line window to upload PySpark script to instance. 
+
+```bash
+$ scp -i .ssh/cs205-gpu-keypair.pem ranking_idx.txt ubuntu@3.89.163.176:/home/ubuntu/
+$ scp -i .ssh/cs205-gpu-keypair.pem spark_output_to_edge_vertices.py ubuntu@3.89.163.176:/home/ubuntu/
+```
+
+Install relevant package and libraries by following Lab 9.
+```bash
+$ sudo apt-add-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt install openjdk-8-jdk
+$ java -version
+
+$ sudo apt-get install scala
+$ scala -version
+
+$ sudo apt-get install python
+$ python -h
+
+$ sudo curl -O http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz
+$ sudo tar xvf ./spark-2.2.0-bin-hadoop2.7.tgz
+$ sudo mkdir /usr/local/spark
+$ sudo cp -r spark-2.2.0-bin-hadoop2.7/* /usr/local/spark
+```
+
+To config environment, add the following line to `~/.profile`. And then execute ```source ~/.profile``` to update PATH in your current session
+
+```bash
+export PATH="$PATH:/usr/local/spark/bin"
+```
+Next, include the internal hostname and IP to `/etc/hosts` with a text editor, with `sudo vim /etc/hosts`
+
+Then we could execute the spark job by running:
+
+```bash
+$ spark-submit spark_output_to_edge_vertices.py 
+```
+We could use `sudo vim spark_output_to_edge_vertices.py` to change the number of thread/core used in that instance by setting different `local[k]` in the line
+`conf = SparkConf().setMaster('local[2]').setAppName('genie3')`.
+
+Then, we could rerun the spark job. Before that, remember to remove the previous output files by:
+
+```bash
+$ rm -R -f vertices.csv
+$ rm -R -f graph_edges.csv
+$ spark-submit spark_output_to_edge_vertices.py 
+```
+
+
+#### Spark on EMR Hadoop Cluster
+Everytime when we set different number of executor and thread per executor, and resubmit spark job to evaluate the execution time and speedup performance, 
+we need to remove previously produced output file in Hadoop file system by using `hadoop fs -rm -R -f`.
+Then we could resubmit the spark job in EMR Hadoop cluster. 
+
+```bash
+$ hadoop fs -rm -R -f graph_edges.csv/
+$ hadoop fs -rm -R -f vertices.csv/
+$ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
+```
+
+[Lab 9](https://harvard-iacs.github.io/2021-CS205/labs/I9/I9.pdf). And then we used m4.xlarge instances to run it in a hadoop cluster with more number of instances and threads per executor, following guide from [Lab 10](https://harvard-iacs.github.io/2021-CS205/labs/I10/I10.pdf). 
 
 ## System and Environment needed to Reproduce our Tests 麻烦你们double check一下有没有问题
