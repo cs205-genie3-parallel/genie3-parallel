@@ -113,7 +113,8 @@ text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
 
 # print all distinct value in the first two columns as vertices file
 text_file.filter(lambda line: float(line.split("\t")[2])> 0.005) \
-	.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1).map(toCSVLine).saveAsTextFile("vertices.csv")
+	.flatMap(lambda x: x.split("\t")[:-1]).distinct().repartition(1) \
+	.map(toCSVLine).saveAsTextFile("vertices.csv")
   
 ```
 
