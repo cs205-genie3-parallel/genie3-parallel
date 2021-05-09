@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Summary
-nav_order: 7
+nav_order: 8
 ---
 
 ## Table of contents
@@ -25,7 +25,7 @@ xxx
 
 ### Lessons Learnt
 * A new platform - Sagemaker
-* Spark Graph (GraphX and Graphframes)
+* Spark Graph (Graphframes)
 
 ### Future Work
 * Investigate other relationships existed among genes
