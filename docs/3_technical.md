@@ -179,6 +179,17 @@ pip install -r requirements.txt
 
 ### PySpark
 
+**System and Environment:**
+- OS: Ubuntu 18.04
+- Instance for Local Node: tried **m4.xlarge** and **g3.4xlarge**
+- Instance for EMR Cluster: **m4.xlarge** with 2 worker nodes, then resize to 4 and 8 worker nodes
+- Kernal: x86_64 GNU/Linux
+- Java 1.8.0
+- Scala 2.11.12
+- PySpark 2.4.4
+
+**Steps for Running the Code:**
+
 #### Spark on Single Node
 
 Spin up instance by following guide on [Lab 9](https://harvard-iacs.github.io/2021-CS205/labs/I9/I9.pdf)
@@ -234,6 +245,8 @@ $ spark-submit spark_output_to_edge_vertices.py
 
 
 #### Spark on EMR Hadoop Cluster
+Spin up instance by following guide from [Lab 10](https://harvard-iacs.github.io/2021-CS205/labs/I10/I10.pdf)
+
 Everytime when we set different number of executor and thread per executor, and resubmit spark job to evaluate the execution time and speedup performance, 
 we need to remove previously produced output file in Hadoop file system by using `hadoop fs -rm -R -f`.
 Then we could resubmit the spark job in EMR Hadoop cluster. 
@@ -243,7 +256,20 @@ $ hadoop fs -rm -R -f graph_edges.csv/
 $ hadoop fs -rm -R -f vertices.csv/
 $ spark-submit --num-executors 2 --executor-cores 1 spark_output_to_edge_vertices.py 
 ```
+Resize the number of workers in hardware option from 2 worker node to 4 nodes, and 8 nodes. Then repeat all the steps above to note down execution times for both job. 
 
-[Lab 9](https://harvard-iacs.github.io/2021-CS205/labs/I9/I9.pdf). And then we used m4.xlarge instances to run it in a hadoop cluster with more number of instances and threads per executor, following guide from [Lab 10](https://harvard-iacs.github.io/2021-CS205/labs/I10/I10.pdf). 
 
-## System and Environment needed to Reproduce our Tests 麻烦你们double check一下有没有问题
+## System and Environment needed to Reproduce our Tests
+
+**System and Environment for SageMaker:**
+- SageMaker Notebook Instance: ml.t2.medium (default)
+- Kernel: conda_python3 (out of the options provided by SageMaker)
+
+**System and Environment for Spark:**
+- OS: Ubuntu 18.04
+- Instance for Local Node: tried **m4.xlarge** and **g3.4xlarge**
+- Instance for EMR Cluster: **m4.xlarge** with 2 worker nodes, then resize to 4 and 8 worker nodes
+- Kernal: x86_64 GNU/Linux
+- Java 1.8.0
+- Scala 2.11.12
+- PySpark 2.4.4
