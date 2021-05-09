@@ -10,7 +10,7 @@ nav_order: 3
 1. TOC
 {:toc}
 
-## Links to repository with source code, evaluation data sets and test cases 没有！！o(╥﹏╥)o
+## Links to Repository with Source Code, Evaluation Data Sets and Test Cases
 [View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel){: .btn .btn-purple .fs-5 .mb-4 .mb-md-0 }
 
 [SageMaker Output Dataset Sample](https://cs205-final.s3.amazonaws.com/output/healthy_0_3000_alljobs){: .btn .fs-5 .mb-4 .mb-md-0 }
@@ -22,7 +22,7 @@ nav_order: 3
 [PySpark Output Dataset - Edges](https://genie3-proj.s3.amazonaws.com/graph_edges.csv/part-00000){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 
-## Technical Description of the Software Design 也没有！！o(╥﹏╥)o
+## Technical Description of the Software Design
 ### SageMaker
 
 For a machine learning job with prepared data for training and testing, SageMaker offers a notebook interface for directly training, testing and deploying estimators on selected AWS EC2 instances. However, since we are using the GENIE3 programming model, we would need to run our custom training script. As novices to SageMaker, we used a SKLearn estimator just for the function of a wrapper. In the custom estimator, we can specify the entry point script, the type of EC2 instance and “hyperparameters” (understandably misused) which will be passed into the entry point script as command line arguments. This is probably a less standard solution of running a custom script on SageMaker and there might be other solutions out there. However, after extensive research and troubleshooting, we find that this is able to fulfil our requirements of orchestrating parallelized computation for now.
@@ -123,10 +123,37 @@ Spark UI Showing Job Running![image](https://user-images.githubusercontent.com/6
 
 Spark UI Showing Job Running![image](https://user-images.githubusercontent.com/6150979/117563125-6477e100-b0d6-11eb-852b-d13fa0e379bb.png)
 
+We changed the number of threads used in Spark single node by editing numbers in setMaster to be passed to Spark, and noted down performance result and speedup for further evaluation in the next section. 
+
+Similarly, we could spin up EMR Spark Cluster with instance m4.xlarge to run code in distributed memory with different number of executors and threads per executors. 
+
+```bash
+$ spark-submit --num-executors 2 --executor-cores 2 spark_output_to_edge_vertices.py
+```
+
+Everytime time we try to run it on a different number of executors and cores per executors, we remove previous output in the hadoop file system.
+
+```bash
+$ hadoop fs -rm -R -f graph_edges.csv/
+$ hadoop fs -rm -R -f vertices.csv/
+```
+
+After successfully complete a spark job, we could download the result from hadoop file system and take a look:
+
+![image](https://user-images.githubusercontent.com/6150979/117563197-cb959580-b0d6-11eb-9b88-a5a0754a85e5.png)
+
+Eventually, we could copy our output to S3 bucket for future use and graph building in Spark. 
+
+![image](https://user-images.githubusercontent.com/6150979/117563216-eb2cbe00-b0d6-11eb-8ac5-5e45008b6b9d.png)
+
+After submitting to S3, we could take a look in S3 bucket, our results are both included in graph_edges.csv/ and vertices.csv/ folders.  
+
+![image](https://user-images.githubusercontent.com/6150979/117563222-f7188000-b0d6-11eb-977a-6a35fb41263e.png)
 
 
 
 ## Code Baseline 还是没有！！o(╥﹏╥)o
+
 
 ## Dependencies
 * sklearn==0.24.2
@@ -134,17 +161,16 @@ Spark UI Showing Job Running![image](https://user-images.githubusercontent.com/6
 * boto3
 
 ## How to Use the Code 能不能问寒和佳慧把你们的使用指南/terminal call加在这里！！
-
 ### SageMaker
-**System and environment:**
+**System and Environment:**
 - SageMaker notebook instance: ml.t2.medium (default)
 - Kernel: conda_python3 (out of the options provided by SageMaker)
 
-**Steps for running the code:**
+**Steps for Running the Code:**
 - Start an AWS SageMaker notebook instance following [this guide] (https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html), setting Github repo to [our repo] (https://github.com/cs205-genie3-parallel/genie3-parallel.git).
 - Install requirements with `pip install -r requirements.txt`
 - Navigate to sagemaker/GENIE3-sagemaker.ipynb. Select conda_python3 as the kernel.
 - Run all the cells, edit the `instance_type`, `hyperparameters` as needed and indicate `start_idx` and `stop_idx` to choose the target genes to compute on.
 
 
-## System and environment needed to reproduce our tests 麻烦你们double check一下有没有问题
+## System and Environment needed to Reproduce our Tests 麻烦你们double check一下有没有问题
