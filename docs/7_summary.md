@@ -12,9 +12,9 @@ nav_order: 7
 
 ---
 
-## Final discussion 这部分麻烦你们再看一下啦 (*^▽^*)
+## Final Discussion
 
-### goals achieved: 问寒麻烦写一下 ლ(╹◡╹ლ)
+### Goals Achieved: 问寒麻烦写一下 ლ(╹◡╹ლ)
 xxx
 
 ### Improvements Suggested
@@ -25,6 +25,7 @@ xxx
 
 ### Lessons Learnt
 * A new platform - Sagemaker
+* Spark Graph (GraphX and Graphframes)
 
 ### Future Work
 * Investigate other relationships existed among genes
@@ -33,8 +34,9 @@ xxx
 * More explorations in Network and Graph using Spark GraphX and Graphframes
 * Graph Visualizations
 
-#### Interesting Insights
+### Interesting Insights
 * Carefully choose the instance type and number in real life application: some instances take up too much resource and the performance-price ratio is too low. From our observation of the experiment, the expensive instances sometimes do not really worth it when comparing the speed they help improve.
+* Spark job running on cluster may not neccessarily perform better than running on single node due to communication overhead, data I/O and bounds in I/O. Besides, especially when there's GPU instance, we should perferably use GPU instance for our task for faster processing and higher level of parallelism with high computational needs. Sometimes using GPU on shared memory single node could perform better than using CPU instances in distributed memory cluster. This could also due to the limitation of our vCPU number, than disallow us to spin up a cluster of GPUs.
 
 ## Citations
 1. Huynh-Thu, V., Geurts, P. (2010) Inferring Regulatory Networks from Expression Data Using Tree-Based Methods. PLOS ONE (2010).
