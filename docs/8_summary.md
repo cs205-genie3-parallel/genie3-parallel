@@ -26,7 +26,7 @@ This marks the completion of our first big-scale cloud computing project. By exp
 
 ### Improvements Suggested
 * Explore other methods of running custom scripts on SageMaker so we can avoid the restriction of the SKLearn estimator, which did not allow running one job on multiple instances (we bypassed this by running separate jobs) and did not support GPU instances.
-* Incorporate the use of GPU
+* Incorporate the use of GPU: due to the fact that skicit-learn could not use GPU, we are unable to incorporate GPU into our currently model.
 * Provide a more generalized and versatile gene expression analysis pipeline involving both SageMaker and PySpark, so other researchers could use reuse this for diverse gene expression analysis tasks.
 * Other than GENIE3, explore other algorithms of deriving pairwise gene significance.
 
