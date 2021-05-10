@@ -8,6 +8,28 @@ For more details please proceed to the documentation [website](https://cs205-gen
 The following guide is a sub section of overall documentation that gives a short introduction into technical details, dataset, and how to use our code.
 
 
+- [Links to Repository with Source Code, Evaluation Data Sets and Test Cases](#links-to-repository-with-source-code--evaluation-data-sets-and-test-cases)
+- [Technical Description of the Software Design](#technical-description-of-the-software-design)
+  * [SageMaker](#sagemaker)
+  * [Spark](#spark)
+  * [PySpark Graph](#pyspark-graph)
+- [Code Baseline](#code-baseline)
+- [Dependencies](#dependencies)
+- [How to Use the Code](#how-to-use-the-code)
+  * [SageMaker](#sagemaker-1)
+  * [PySpark](#pyspark)
+    + [*Spark on Single Node*](#-spark-on-single-node-)
+    + [*Spark on EMR Hadoop Cluster*](#-spark-on-emr-hadoop-cluster-)
+    + [*Scale Up to Full Dataset from SageMaker Output*](#-scale-up-to-full-dataset-from-sagemaker-output-)
+  * [Graph](#graph)
+- [System and Environment needed to Reproduce our Tests](#system-and-environment-needed-to-reproduce-our-tests)
+
+
+
+
+
+
+
 
 ## Links to Repository with Source Code, Evaluation Data Sets and Test Cases
 [View Repo on GitHub](https://github.com/cs205-genie3-parallel/genie3-parallel)
